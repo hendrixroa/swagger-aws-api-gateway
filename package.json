@@ -1,0 +1,36 @@
+{
+  "name": "swagger-aws-api-gateway",
+  "version": "1.0.0",
+  "description": "Module to add aws api gateway integration to a swagger file",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "yarn tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hendrixroa/swagger-aws-api-gateway"
+  },
+  "keywords": [
+    "aws",
+    "apigateway",
+    "server",
+    "openapi",
+    "swagger"
+  ],
+  "author": "Hendrix Roa <hendrix.alex87@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hendrixroa/swagger-aws-api-gateway/issues"
+  },
+  "homepage": "https://github.com/hendrixroa/swagger-aws-api-gateway#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.31",
+    "openapi-types": "^7.2.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.2"
+  }
+}
