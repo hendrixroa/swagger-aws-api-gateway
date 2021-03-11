@@ -104,12 +104,24 @@ export class APIGatewayIntegrator {
     return {
       "BAD_REQUEST_BODY": {
         "statusCode": 400,
+        "responseParameters": {
+          "gatewayresponse.header.x-request-path": "method.input.params",
+          "gatewayresponse.header.x-request-query": "method.input.params.q",
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+          "gatewayresponse.header.x-request-header": "method.input.params.Accept"
+        },
         "responseTemplates": {
           "application/json": "{\"message\": \"$context.error.validationErrorString\"}"
         }
       },
       "BAD_REQUEST_PARAMETERS": {
         "statusCode": 400,
+        "responseParameters": {
+          "gatewayresponse.header.x-request-path": "method.input.params",
+          "gatewayresponse.header.x-request-query": "method.input.params.q",
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+          "gatewayresponse.header.x-request-header": "method.input.params.Accept"
+        },
         "responseTemplates": {
           "application/json": "{\"message\": \"$context.error.validationErrorString\"}"
         }
