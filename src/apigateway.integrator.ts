@@ -1,5 +1,9 @@
 import * as SwaggerParser from "@apidevtools/swagger-parser";
 
+export class IntegratorOptions {
+  enableValidation?: boolean = false;
+}
+
 export class APIGatewayIntegrator {
   private readonly apiSpec: any;
 
@@ -7,24 +11,32 @@ export class APIGatewayIntegrator {
     this.apiSpec = apiSpec;
   }
 
-  public async addIntegration(): Promise<any> {
+  public async addIntegration(options?: IntegratorOptions): Promise<any> {
     await this.validateOpenapiSpec();
     let apiSpecMutable: any = this.apiSpec;
+    const enableValidators = options && options?.enableValidation && options.enableValidation === true;
+
+    if(enableValidators) {
+      apiSpecMutable['x-amazon-apigateway-request-validators'] = this.getValidators();
+      apiSpecMutable['x-amazon-apigateway-gateway-responses'] = this.getResponses();
+    }
 
     for (const path in apiSpecMutable.paths) {
       for (const method in apiSpecMutable.paths[path]) {
         const objIntegration = this.addIntegrationObject(apiSpecMutable.paths[path][method], method, path);
+
         apiSpecMutable.paths[path][method][
           'x-amazon-apigateway-integration'
           ] = objIntegration;
         apiSpecMutable.paths[path].options = this.addIntegrationCORS();
-        apiSpecMutable.paths[path][method][
-          'x-amazon-apigateway-request-validator'
-          ] = "all";
+
+        if (enableValidators) {
+          apiSpecMutable.paths[path][method][
+            'x-amazon-apigateway-request-validator'
+            ] = "all";
+        }
       }
     }
-    apiSpecMutable['x-amazon-apigateway-request-validators'] = this.getValidators();
-    apiSpecMutable['x-amazon-apigateway-gateway-responses'] = this.getResponses();
     return apiSpecMutable;
   }
 

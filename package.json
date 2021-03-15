@@ -1,6 +1,6 @@
 {
   "name": "swagger-aws-api-gateway",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Module to add aws api gateway integration to a swagger file",
   "main": "index.js",
   "scripts": {
