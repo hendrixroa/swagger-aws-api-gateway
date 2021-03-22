@@ -1,9 +1,5 @@
 import * as SwaggerParser from "@apidevtools/swagger-parser";
 
-export class IntegratorOptions {
-  enableValidation?: boolean = false;
-}
-
 export class APIGatewayIntegrator {
   private readonly apiSpec: any;
 
@@ -11,32 +7,17 @@ export class APIGatewayIntegrator {
     this.apiSpec = apiSpec;
   }
 
-  public async addIntegration(options?: IntegratorOptions): Promise<any> {
+  public async addIntegration(): Promise<any> {
     await this.validateOpenapiSpec();
     let apiSpecMutable: any = this.apiSpec;
-    const enableValidators = options && options?.enableValidation && options.enableValidation === true;
-
-    apiSpecMutable['x-amazon-apigateway-binary-media-types'] = ['*/*'];
-
-    if(enableValidators) {
-      apiSpecMutable['x-amazon-apigateway-request-validators'] = this.getValidators();
-      apiSpecMutable['x-amazon-apigateway-gateway-responses'] = this.getResponses();
-    }
 
     for (const path in apiSpecMutable.paths) {
       for (const method in apiSpecMutable.paths[path]) {
         const objIntegration = this.addIntegrationObject(apiSpecMutable.paths[path][method], method, path);
-
         apiSpecMutable.paths[path][method][
           'x-amazon-apigateway-integration'
           ] = objIntegration;
         apiSpecMutable.paths[path].options = this.addIntegrationCORS();
-
-        if (enableValidators) {
-          apiSpecMutable.paths[path][method][
-            'x-amazon-apigateway-request-validator'
-            ] = "all";
-        }
       }
     }
     return apiSpecMutable;
@@ -99,44 +80,6 @@ export class APIGatewayIntegrator {
         ] = `method.request.path.${item}`;
     }
     return requestParams;
-  }
-
-  private getValidators() {
-    return {
-      "all": {
-        "validateRequestBody": true,
-        "validateRequestParameters": true
-      },
-      "params-only": {
-        "validateRequestBody": false,
-        "validateRequestParameters": true
-      }
-    };
-  }
-
-  private getResponses() {
-    return {
-      "BAD_REQUEST_BODY": {
-        "statusCode": 400,
-        "responseParameters": {
-          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
-          "gatewayresponse.header.from-request-header" : "method.request.header.Accept"
-        },
-        "responseTemplates": {
-          "application/json": "{\"message\":\"$context.error.validationErrorString\",\"errorType\":\"validation\"}"
-        }
-      },
-      "BAD_REQUEST_PARAMETERS": {
-        "statusCode": 400,
-        "responseParameters": {
-          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
-          "gatewayresponse.header.from-request-header" : "method.request.header.Accept"
-        },
-        "responseTemplates": {
-          "application/json": "{\"message\":\"$context.error.validationErrorString\",\"errorType\":\"validation\"}"
-        }
-      }
-    };
   }
 
   private addIntegrationCORS() {
