@@ -16,6 +16,8 @@ export class APIGatewayIntegrator {
     let apiSpecMutable: any = this.apiSpec;
     const enableValidators = options && options?.enableValidation && options.enableValidation === true;
 
+    apiSpecMutable['x-amazon-apigateway-binary-media-types'] = ['*/*'];
+
     if(enableValidators) {
       apiSpecMutable['x-amazon-apigateway-request-validators'] = this.getValidators();
       apiSpecMutable['x-amazon-apigateway-gateway-responses'] = this.getResponses();
