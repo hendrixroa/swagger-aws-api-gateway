@@ -25,7 +25,7 @@ export class APIGatewayIntegrator {
   public async validateOpenapiSpec(): Promise<any> {
     try {
       await SwaggerParser.validate(this.apiSpec);
-      return await SwaggerParser.dereference(this.apiSpec);
+      return await SwaggerParser.bundle(this.apiSpec);
     } catch (err) {
       throw new Error('Invalid api spec: ' + err);
     }
