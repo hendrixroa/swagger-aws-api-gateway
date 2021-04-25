@@ -8,8 +8,7 @@ export class APIGatewayIntegrator {
   }
 
   public async addIntegration(): Promise<any> {
-    await this.validateOpenapiSpec();
-    let apiSpecMutable: any = this.apiSpec;
+    let apiSpecMutable: any = await this.validateOpenapiSpec();
 
     for (const path in apiSpecMutable.paths) {
       for (const method in apiSpecMutable.paths[path]) {
@@ -23,9 +22,10 @@ export class APIGatewayIntegrator {
     return apiSpecMutable;
   }
 
-  public async validateOpenapiSpec(): Promise<void> {
+  public async validateOpenapiSpec(): Promise<any> {
     try {
       await SwaggerParser.validate(this.apiSpec);
+      return await SwaggerParser.dereference(this.apiSpec);
     } catch (err) {
       throw new Error('Invalid api spec: ' + err);
     }
