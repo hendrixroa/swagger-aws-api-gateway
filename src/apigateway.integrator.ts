@@ -19,7 +19,7 @@ export class APIGatewayIntegrator {
         apiSpecMutable.paths[path].options = this.addIntegrationCORS();
       }
     }
-    return apiSpecMutable;
+    return SwaggerParser.dereference(apiSpecMutable);
   }
 
   public async validateOpenapiSpec(): Promise<any> {
